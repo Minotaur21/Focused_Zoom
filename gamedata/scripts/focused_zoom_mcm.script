@@ -3,9 +3,9 @@ local defaults = {
     ["hud_fov_mult"] = 0.47,
 	["fov_mult"] = 0.47,
     ["look_sensitivity_mult"] = 0.47,
-	["aiming_hud_fov_mult"] = 0.47
+	["aiming_hud_fov_mult"] = 0.47,
 	["aiming_fov_mult"] = 0.47,
-	["aiming_look_sensitivity_mult"] = 0.47
+	["aiming_sensitivity_mult"] = 0.47
 }
 
 function get_config(key)
