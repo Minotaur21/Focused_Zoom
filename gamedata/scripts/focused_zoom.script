@@ -1,17 +1,5 @@
--- Game Setting values
-local default_hud_fov = ui_options.get("video/basic/hud_fov")
-local default_fov = ui_options.get("video/basic/fov")
-local default_mouse_sens = ui_options.get("control/general/mouse_sens")
-local default_mouse_sens_aim = ui_options.get("control/general/mouse_sens_aim")
-
--- Adjustable Scopes MCM values and fov config
-local zoom_in_iron = 0.40
-local zoom_in_scope = 0.35
-local zoom_bad_scope = 0.2
-local gl_fov = 0.45
-ini_fov = ini_file_ex("items\\weapon_fov_values.ltx")
-
 -- Focused Zoom MCM values
+
 local hud_fov_mult = 0.47
 local fov_mult = 0.47
 local look_sensitivity_mult = 0.47
@@ -19,13 +7,36 @@ local aiming_hud_fov_mult = 0.47
 local aiming_fov_mult = 0.47
 local aiming_look_sensitivity_mult = 0.47
 
+-- Adjustable Scopes MCM values and fov config
+
+local zoom_in_iron = 0.40
+local zoom_in_scope = 0.35
+local zoom_bad_scope = 0.2
+local gl_fov = 0.45
+
 -- When weapon is aimed and when Focused Zoom not on
+
 local default_aim_hud_fov = 0.35
 local default_aim_fov = 0
 
 local is_mcm_open = false
 local focused_zoom = false
 local weapon_aimed = false
+
+-- Game Setting values
+
+local default_hud_fov = ui_options.get("video/basic/hud_fov")
+local default_fov = ui_options.get("video/basic/fov")
+local default_mouse_sens = ui_options.get("control/general/mouse_sens")
+local default_mouse_sens_aim = ui_options.get("control/general/mouse_sens_aim")
+
+ini_fov = ini_file_ex("items\\weapon_fov_values.ltx")
+
+function print_dbg( text , ...)
+	if true then
+		printf( "Zoom: | %s |  "..text ,time_global(), ...)
+	end
+end
 
 function get_on_start()
 	zoom_in_iron = scope_fov_mcm.get_config("iron_fov")
@@ -61,15 +72,37 @@ local function on_option_change()
 end
 
 function actor_on_weapon_zoom_in(wpn)
+	print_dbg("weapon aim shows true")
     weapon_aimed = true
 end
 
 function actor_on_weapon_zoom_out(wpn)
+	print_dbg("weapon aim shows false")
     weapon_aimed = false
 end
 
+-- Returns 0 if using scope with no zoom, else returns fov when Focused Zoom off
+
+function get_aim_fov()
+	print_dbg("get_aim_fov started")
+	local factor = 0
+	local weapon = db.actor:active_item()
+	local two_dim = weapon and ini_sys:r_float_ex(weapon:section(),"scope_status") == 1
+	if weapon and (not two_dim) then
+		print_dbg("get_aim_fov not 2d scope")
+		factor = ini_sys:r_float_ex(weapon:section(),"scope_zoom_factor")
+	else
+		print_dbg("get_aim_fov is 2d scope")
+	end
+	local scope_fov = factor * 0.75
+	print_dbg("get_aim_fov complete")
+	return scope_fov
+end
+
 -- Returns hud_fov when aiming without Focused Zoom
+
 function get_aim_hud_fov()
+	print_dbg("get_aim_hud_fov started")
 	local weapon = db.actor:active_item()
 	local scope = utils_item.get_attached_scope(weapon)
 	local parent = ini_sys:r_string_ex(weapon:section(),"parent_section") or weapon:section()
@@ -78,118 +111,145 @@ function get_aim_hud_fov()
 	local sec_exist = ini_fov:section_exist(parent)
 
 	if weapon and weapon:weapon_in_grenade_mode() then
+		print_dbg("get_aim_hud_fov returns gl")
 		return gl_fov
 	end
 	local iron_fov = ini_fov:r_float_ex(parent, "iron")
 	if sec_exist and scope then
 		local custom_fov = ini_fov:r_float_ex(parent, scope)
 		if scope and custom_fov then
+			print_dbg("get_aim_hud_fov returns custom")
 			return custom_fov
 		end
 	end
 	if sec_exist and (not scope) and iron_fov then
+		print_dbg("get_aim_hud_fov returns iron")
 		return iron_fov
 	end
 	if scope and not_pistol then
 		local scope_bad = ini_fov:r_bool_ex("bad_scopes", scope)
 		if scope_bad and (not two_dim) then
+			print_dbg("get_aim_hud_fov returns bad_scope")
 			return zoom_bad_scope
-		else return zoom_in_scope
+		else
+			print_dbg("get_aim_hud_fov returns zoom_in_scope")
+			return zoom_in_scope
 		end
 	end
 	if (not scope) or IsPistol(weapon) then
+		print_dbg("get_aim_hud_fov returns zoom_in_iron")
 		return zoom_in_iron
 	end
-end
-
--- Returns 0 if using scope with no zoom, else returns fov when Focused Zoom off
-function get_aim_fov()
-	local factor = 0
-	local weapon = db.actor:active_item()
-	local two_dim = weapon and ini_sys:r_float_ex(weapon:section(),"scope_status") == 1
-	if weapon and (not two_dim) then
-		factor = ini_sys:r_float_ex(weapon:section(),"scope_zoom_factor")
-	end
-	local scope_fov = factor * 0.75
-	return scope_fov
-end
-
--- Turns on Focused Zoom while holstered
-function focused_zoom_in()
-	focused_zoom = true
-	local weapon = db.actor:active_item()
-	if not weapon then
-		exec_console_cmd("hud_fov " .. default_hud_fov * hud_fov_mult)
-		exec_console_cmd("fov " .. default_fov * fov_mult)
-		exec_console_cmd("mouse_sens " .. default_mouse_sens * look_sensitivity_mult)
-	end
-end
-
--- Turns off Focused Zoom while holstered
-function focused_zoom_out()
-	local weapon = db.actor:active_item()
-	if not weapon then
-		exec_console_cmd("hud_fov " .. default_hud_fov)
-		exec_console_cmd("fov " .. default_fov)
-		exec_console_cmd("mouse_sens " .. default_mouse_sens)
-	end
-	focused_zoom = false
+	print_dbg("get_aim_hud_fov returns NOTHING")
 end
 
 -- Turns on Focused Zoom while aiming
+
 function scope_focused_zoom_in()
+	print_dbg("scope_focused_zoom_in started")
 	focused_zoom = true
 	local weapon = db.actor:active_item()
 	local two_dim = weapon and ini_sys:r_float_ex(weapon:section(),"scope_status") == 1
 	if weapon and weapon_aimed and (not two_dim) then
+		print_dbg("scope_focused_zoom_in not 2d")
 		default_aim_hud_fov = get_aim_hud_fov()
 		exec_console_cmd("hud_fov " .. default_aim_hud_fov * aiming_hud_fov_mult)
 		
 		default_aim_fov = get_aim_fov()
 		if default_aim_fov == 0 then
+			print_dbg("default_aim_fov is 0")
 			exec_console_cmd("fov " .. default_fov * aiming_fov_mult)
 		else
+			print_dbg("default_aim_fov is not 0")
 			exec_console_cmd("fov " .. default_aim_fov * aiming_fov_mult)
 		end
 		
 		exec_console_cmd("mouse_sens " .. default_mouse_sens_aim * aiming_look_sensitivity_mult)
 	end
+	print_dbg("scope_focused_zoom_in is 2d")
+	print_dbg("scope_focused_zoom_in complete")
 end
 
 -- Turns off Focused Zoom while aiming
+
 function scope_focused_zoom_out()
+	print_dbg("scope_focused_zoom_out started")
 	local weapon = db.actor:active_item()
 	local two_dim = weapon and ini_sys:r_float_ex(weapon:section(),"scope_status") == 1
 	if weapon and weapon_aimed and (not two_dim) then
+		print_dbg("scope_focused_zoom_out not 2d")
 		default_aim_hud_fov = get_aim_hud_fov()
 		exec_console_cmd("hud_fov " .. default_aim_hud_fov)
 		
 		default_aim_fov = get_aim_fov()
 		if default_aim_fov == 0 then
+			print_dbg("default_aim_fov is 0")
 			exec_console_cmd("fov " .. default_fov)
 		else
+			print_dbg("default_aim_fov is not 0")
 			exec_console_cmd("fov " .. default_aim_fov)
 		end
 		
 		exec_console_cmd("mouse_sens " .. default_mouse_sens_aim)
 	end
+	print_dbg("scope_focused_zoom_out is 2d")
+	print_dbg("scope_focused_zoom_out complete")
 	focused_zoom = false
 end
 
+-- Turns on Focused Zoom while holstered
+function focused_zoom_in()
+	print_dbg("focused_zoom_in started")
+	focused_zoom = true
+	local weapon = db.actor:active_item()
+	if not weapon then
+		print_dbg("weapon holstered")
+		exec_console_cmd("hud_fov " .. default_hud_fov * hud_fov_mult)
+		exec_console_cmd("fov " .. default_fov * fov_mult)
+		exec_console_cmd("mouse_sens " .. default_mouse_sens * look_sensitivity_mult)
+	else
+		print_dbg("weapon not holstered")
+	end
+	print_dbg("focused_zoom_in complete")
+end
+
+-- Turns off Focused Zoom while holstered
+
+function focused_zoom_out()
+	print_dbg("focused_zoom_out started")
+	local weapon = db.actor:active_item()
+	if not weapon then
+		print_dbg("weapon holstered")
+		exec_console_cmd("hud_fov " .. default_hud_fov)
+		exec_console_cmd("fov " .. default_fov)
+		exec_console_cmd("mouse_sens " .. default_mouse_sens)
+	else
+		print_dbg("weapon not holstered")
+	end
+	focused_zoom = false
+	print_dbg("focused_zoom_out complete")
+end
+
 local function GUI_on_show(name)
-	if (name == "UIMCM") then (is_mcm_open = true) end
+	if name == "UIMCM" then
+		is_mcm_open = true
+	end
 end
 
 local function GUI_on_hide(namee)
-	if (namee == "UIMCM") then (is_mcm_open = true) end
+	if namee == "UIMCM" then
+		is_mcm_open = true
+	end
 end
 
 local function on_key_press(key)
 	local bind = dik_to_bind(key)
 	if (bind == key_bindings.kWPN_ZOOM) and not weapon_aimed and not focused_zoom then
+		print_dbg("focused_zoom_in pressed")
 		focused_zoom_in()
 	end
 	if (bind == key_bindings.kUSE) and weapon_aimed and not focused_zoom then
+		print_dbg("scope_focused_zoom_in pressed")
 		scope_focused_zoom_in()
 	end
 end
@@ -197,9 +257,11 @@ end
 local function on_key_release(key)
 	local bind = dik_to_bind(key)
 	if (bind == key_bindings.kWPN_ZOOM) and not weapon_aimed and focused_zoom then
+		print_dbg("focused_zoom_out pressed")
 		focused_zoom_out()
 	end
 	if (bind == key_bindings.kUSE) and weapon_aimed and focused_zoom then
+		print_dbg("scope_focused_zoom_out pressed")
 		scope_focused_zoom_out()
 	end
 end
