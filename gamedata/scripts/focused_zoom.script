@@ -71,15 +71,7 @@ local function on_option_change()
 	end
 end
 
-function actor_on_weapon_zoom_in(wpn)
-	print_dbg("weapon aim shows true")
-    weapon_aimed = true
-end
 
-function actor_on_weapon_zoom_out(wpn)
-	print_dbg("weapon aim shows false")
-    weapon_aimed = false
-end
 
 -- Returns 0 if using scope with no zoom, else returns fov when Focused Zoom off
 
@@ -143,32 +135,7 @@ function get_aim_hud_fov()
 	print_dbg("get_aim_hud_fov returns NOTHING")
 end
 
--- Turns on Focused Zoom while aiming
 
-function scope_focused_zoom_in()
-	print_dbg("scope_focused_zoom_in started")
-	focused_zoom = true
-	local weapon = db.actor:active_item()
-	local two_dim = weapon and ini_sys:r_float_ex(weapon:section(),"scope_status") == 1
-	if weapon and weapon_aimed and (not two_dim) then
-		print_dbg("scope_focused_zoom_in not 2d")
-		default_aim_hud_fov = get_aim_hud_fov()
-		exec_console_cmd("hud_fov " .. default_aim_hud_fov * aiming_hud_fov_mult)
-		
-		default_aim_fov = get_aim_fov()
-		if default_aim_fov == 0 then
-			print_dbg("default_aim_fov is 0")
-			exec_console_cmd("fov " .. default_fov * aiming_fov_mult)
-		else
-			print_dbg("default_aim_fov is not 0")
-			exec_console_cmd("fov " .. default_aim_fov * aiming_fov_mult)
-		end
-		
-		exec_console_cmd("mouse_sens " .. default_mouse_sens_aim * aiming_look_sensitivity_mult)
-	end
-	print_dbg("scope_focused_zoom_in is 2d")
-	print_dbg("scope_focused_zoom_in complete")
-end
 
 -- Turns off Focused Zoom while aiming
 
@@ -189,28 +156,37 @@ function scope_focused_zoom_out()
 			print_dbg("default_aim_fov is not 0")
 			exec_console_cmd("fov " .. default_aim_fov)
 		end
-		
-		exec_console_cmd("mouse_sens " .. default_mouse_sens_aim)
+	else
+		print_dbg("scope_focused_zoom_out is 2d")
 	end
-	print_dbg("scope_focused_zoom_out is 2d")
 	print_dbg("scope_focused_zoom_out complete")
 	focused_zoom = false
 end
 
--- Turns on Focused Zoom while holstered
-function focused_zoom_in()
-	print_dbg("focused_zoom_in started")
+-- Turns on Focused Zoom while aiming
+
+function scope_focused_zoom_in()
+	print_dbg("scope_focused_zoom_in started")
 	focused_zoom = true
 	local weapon = db.actor:active_item()
-	if not weapon then
-		print_dbg("weapon holstered")
-		exec_console_cmd("hud_fov " .. default_hud_fov * hud_fov_mult)
-		exec_console_cmd("fov " .. default_fov * fov_mult)
-		exec_console_cmd("mouse_sens " .. default_mouse_sens * look_sensitivity_mult)
+	local two_dim = weapon and ini_sys:r_float_ex(weapon:section(),"scope_status") == 1
+	if weapon and weapon_aimed and (not two_dim) then
+		print_dbg("scope_focused_zoom_in not 2d")
+		default_aim_hud_fov = get_aim_hud_fov()
+		exec_console_cmd("hud_fov " .. default_aim_hud_fov * aiming_hud_fov_mult)
+		
+		default_aim_fov = get_aim_fov()
+		if default_aim_fov == 0 then
+			print_dbg("default_aim_fov is 0")
+			exec_console_cmd("fov " .. default_fov * aiming_fov_mult)
+		else
+			print_dbg("default_aim_fov is not 0")
+			exec_console_cmd("fov " .. default_aim_fov * aiming_fov_mult)
+		end
 	else
-		print_dbg("weapon not holstered")
+		print_dbg("scope_focused_zoom_in is 2d")
 	end
-	print_dbg("focused_zoom_in complete")
+	print_dbg("scope_focused_zoom_in complete")
 end
 
 -- Turns off Focused Zoom while holstered
@@ -230,6 +206,22 @@ function focused_zoom_out()
 	print_dbg("focused_zoom_out complete")
 end
 
+-- Turns on Focused Zoom while holstered
+function focused_zoom_in()
+	print_dbg("focused_zoom_in started")
+	focused_zoom = true
+	local weapon = db.actor:active_item()
+	if not weapon then
+		print_dbg("weapon holstered")
+		exec_console_cmd("hud_fov " .. default_hud_fov * hud_fov_mult)
+		exec_console_cmd("fov " .. default_fov * fov_mult)
+		exec_console_cmd("mouse_sens " .. default_mouse_sens * look_sensitivity_mult)
+	else
+		print_dbg("weapon not holstered")
+	end
+	print_dbg("focused_zoom_in complete")
+end
+
 local function GUI_on_show(name)
 	if name == "UIMCM" then
 		is_mcm_open = true
@@ -242,15 +234,25 @@ local function GUI_on_hide(namee)
 	end
 end
 
+function actor_on_weapon_zoom_in(wpn)
+	print_dbg("weapon aim shows true")
+    weapon_aimed = true
+end
+
+function actor_on_weapon_zoom_out(wpn)
+	print_dbg("weapon aim shows false")
+    weapon_aimed = false
+end
+
 local function on_key_press(key)
 	local bind = dik_to_bind(key)
-	if (bind == key_bindings.kWPN_ZOOM) and not weapon_aimed and not focused_zoom then
-		print_dbg("focused_zoom_in pressed")
-		focused_zoom_in()
-	end
 	if (bind == key_bindings.kUSE) and weapon_aimed and not focused_zoom then
 		print_dbg("scope_focused_zoom_in pressed")
 		scope_focused_zoom_in()
+	end
+	if (bind == key_bindings.kWPN_ZOOM) and not weapon_aimed and not focused_zoom then
+		print_dbg("focused_zoom_in pressed")
+		focused_zoom_in()
 	end
 end
 
