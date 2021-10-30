@@ -17,7 +17,7 @@ local gl_fov = 0.45
 -- When weapon is aimed and when Focused Zoom not on
 
 local default_aim_hud_fov = 0.35
-local default_aim_fov = 0
+local default_aim_fov = 70
 
 local is_mcm_open = false
 local focused_zoom = false
@@ -154,7 +154,7 @@ function scope_focused_zoom_out()
 			exec_console_cmd("fov " .. default_fov)
 		else
 			print_dbg("default_aim_fov is not 0")
-			exec_console_cmd("fov " .. default_aim_fov)
+			exec_console_cmd("fov " .. default_fov)
 		end
 	else
 		print_dbg("scope_focused_zoom_out is 2d")
@@ -182,6 +182,7 @@ function scope_focused_zoom_in()
 		else
 			print_dbg("default_aim_fov is not 0")
 			exec_console_cmd("fov " .. default_aim_fov * aiming_fov_mult)
+--			default_aim_hud_fov = 0
 		end
 	else
 		print_dbg("scope_focused_zoom_in is 2d")
