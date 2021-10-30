@@ -21,6 +21,7 @@ local default_aim_fov = 70
 
 local is_mcm_open = false
 local focused_zoom = false
+local scope_focused_zoom = false
 local weapon_aimed = false
 
 -- Game Setting values
@@ -70,8 +71,6 @@ local function on_option_change()
 		aiming_look_sensitivity_mult = focused_zoom_mcm.get_config("aiming_look_sensitivity_mult")
 	end
 end
-
-
 
 -- Returns 0 if using scope with no zoom, else returns fov when Focused Zoom off
 
@@ -135,8 +134,6 @@ function get_aim_hud_fov()
 	print_dbg("get_aim_hud_fov returns NOTHING")
 end
 
-
-
 -- Turns off Focused Zoom while aiming
 
 function scope_focused_zoom_out()
@@ -160,21 +157,21 @@ function scope_focused_zoom_out()
 		print_dbg("scope_focused_zoom_out is 2d")
 	end
 	print_dbg("scope_focused_zoom_out complete")
-	focused_zoom = false
+	scope_focused_zoom = false
 end
 
 -- Turns on Focused Zoom while aiming
 
 function scope_focused_zoom_in()
 	print_dbg("scope_focused_zoom_in started")
-	focused_zoom = true
+	scope_focused_zoom = true
 	local weapon = db.actor:active_item()
 	local two_dim = weapon and ini_sys:r_float_ex(weapon:section(),"scope_status") == 1
 	if weapon and weapon_aimed and (not two_dim) then
 		print_dbg("scope_focused_zoom_in not 2d")
 		default_aim_hud_fov = get_aim_hud_fov()
 		exec_console_cmd("hud_fov " .. default_aim_hud_fov * aiming_hud_fov_mult)
-		
+	
 		default_aim_fov = get_aim_fov()
 		if default_aim_fov == 0 then
 			print_dbg("default_aim_fov is 0")
@@ -182,10 +179,9 @@ function scope_focused_zoom_in()
 		else
 			print_dbg("default_aim_fov is not 0")
 			exec_console_cmd("fov " .. default_aim_fov * aiming_fov_mult)
---			default_aim_hud_fov = 0
 		end
 	else
-		print_dbg("scope_focused_zoom_in is 2d")
+		--print_dbg("scope_focused_zoom_in is 2d")
 	end
 	print_dbg("scope_focused_zoom_in complete")
 end
@@ -223,21 +219,16 @@ function focused_zoom_in()
 	print_dbg("focused_zoom_in complete")
 end
 
-local function GUI_on_show(name)
-	if name == "UIMCM" then
-		is_mcm_open = true
-	end
-end
-
 local function GUI_on_hide(namee)
 	if namee == "UIMCM" then
 		is_mcm_open = true
 	end
 end
 
-function actor_on_weapon_zoom_in(wpn)
-	print_dbg("weapon aim shows true")
-    weapon_aimed = true
+local function GUI_on_show(name)
+	if name == "UIMCM" then
+		is_mcm_open = true
+	end
 end
 
 function actor_on_weapon_zoom_out(wpn)
@@ -245,27 +236,36 @@ function actor_on_weapon_zoom_out(wpn)
     weapon_aimed = false
 end
 
+function actor_on_weapon_zoom_in(wpn)
+	print_dbg("weapon aim shows true")
+    weapon_aimed = true
+end
+
+local function on_key_release(key)
+	local bind = dik_to_bind(key)
+	if (bind == key_bindings.kUSE) and weapon_aimed and scope_focused_zoom then
+		print_dbg("scope_focused_zoom_out pressed")
+		scope_focused_zoom_out()
+	end
+	if (bind == key_bindings.kWPN_ZOOM) and not weapon_aimed and focused_zoom then
+		print_dbg("focused_zoom_out pressed")
+		if scope_focused_zoom then
+			scope_focused_zoom_out()
+			return
+		end
+		focused_zoom_out()
+	end
+end
+
 local function on_key_press(key)
 	local bind = dik_to_bind(key)
-	if (bind == key_bindings.kUSE) and weapon_aimed and not focused_zoom then
+	if (bind == key_bindings.kUSE) and weapon_aimed and not scope_focused_zoom then
 		print_dbg("scope_focused_zoom_in pressed")
 		scope_focused_zoom_in()
 	end
 	if (bind == key_bindings.kWPN_ZOOM) and not weapon_aimed and not focused_zoom then
 		print_dbg("focused_zoom_in pressed")
 		focused_zoom_in()
-	end
-end
-
-local function on_key_release(key)
-	local bind = dik_to_bind(key)
-	if (bind == key_bindings.kWPN_ZOOM) and not weapon_aimed and focused_zoom then
-		print_dbg("focused_zoom_out pressed")
-		focused_zoom_out()
-	end
-	if (bind == key_bindings.kUSE) and weapon_aimed and focused_zoom then
-		print_dbg("scope_focused_zoom_out pressed")
-		scope_focused_zoom_out()
 	end
 end
 
