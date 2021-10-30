@@ -1,0 +1,59 @@
+<!-- 
+	Anomaly Modconfiguration Menu strings
+	
+-->
+
+<string_table>
+
+
+	<string id="ui_mcm_focused_title">
+		<text>Focused Zoom Settings</text>
+	</string>	
+	<string id="ui_mcm_menu_focused">
+		<text>Focused Zoom</text>
+	</string>
+
+	<string id="ui_mcm_focused_hud_fov_mult">
+		<text>HUD FOV Multiplier for Focusing While Holstered</text>
+	</string>
+	<string id="ui_mcm_focused_hud_fov_mult_desc">
+		<text>needs testing.</text>
+	</string>
+
+	<string id="ui_mcm_focused_fov_mult">
+		<text>FOV Multiplier for Focusing While Holstered</text>
+	</string>
+	<string id="ui_mcm_focused_fov_mult_desc">
+		<text>needs testing.</text>
+	</string>
+
+	<string id="ui_mcm_focused_look_sensitivity_mult">
+		<text>Look Sensitivity Multiplier for Focusing While Holstered</text>
+	</string>
+	<string id="ui_mcm_focused_look_sensitivity_mult_desc">
+		<text>Lower values reduce your mouse sensitivity while Focusing when holstered.</text>
+	</string>
+
+	<string id="ui_mcm_focused_aiming_hud_fov_mult">
+		<text>HUD FOV Multiplier for Focusing While Aiming</text>
+	</string>
+	<string id="ui_mcm_focused_aiming_hud_fov_mult_desc">
+		<text>Lower values bring the weapon sights closer.</text>
+	</string>
+
+	<string id="ui_mcm_focused_aiming_fov_mult">
+		<text>FOV Multiplier for Focusing While Aiming</text>
+	</string>
+	<string id="ui_mcm_focused_aiming_fov_mult_desc">
+		<text>needs testing.</text>
+	</string>
+
+	<string id="ui_mcm_focused_aiming_look_sensitivity_mult">
+		<text>Look Sensitivity Multiplier for Focusing While Aiming</text>
+	</string>
+	<string id="ui_mcm_focused_aiming_look_sensitivity_mult_desc">
+		<text>Lower values reduce your mouse sensitivity while Focusing when aiming.</text>
+	</string>
+	
+
+</string_table>
