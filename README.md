@@ -16,7 +16,7 @@ When you're aiming with a weapon, you can bring the sight/scope closer to you an
 
 WHY DO YOU NEED THIS?
 --------------------------------------------------------------------------------------------------------------------------
-- It's not *needed*, you old fart. Yes we all know, in real life your eyes aren't binoculars and you can't zoom-in your vision like you're JC friggin Denton.
+- It's not *needed*, you old fart. Yes we all know, in real life your eyes aren't binoculars and you can't zoom-in your vision like a cyborg.
 But this mod isn't meant to simulate real life. It's meant to provide some convenience when you're exploring in the Zone.
 - Who has the patience to pull their binoculars out every time they want to take a small glance down the road? Or when they want to marvel at the mayhem?
 - The mod is called Focus for a reason, imagine your character tuning out all the nonsense around him and getting tunnel vision as he concentrates on what's in front of him.
