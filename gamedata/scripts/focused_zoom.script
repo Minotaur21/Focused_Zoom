@@ -16,7 +16,7 @@ local gl_fov = 0.45
 ini_fov = ini_file_ex("items\\weapon_fov_values.ltx")
 
 -- Values when weapon is aimed and Focused Zoom is not on
-local default_aim_hud_fov = 0.35	-- hud_fov as set by Adjustable Scopes configs
+local default_aim_hud_fov = 0.6	-- hud_fov as set by Adjustable Scopes configs
 local default_zoom_factor = 0		-- scope_zoom_factor as set by weapon configs
 
 -- Game Setting values
@@ -114,6 +114,8 @@ function scope_focused_zoom_out()
 	if weapon then
 		if two_dim then
 			return
+		elseif not weapon_aimed then
+			exec_console_cmd("hud_fov " .. default_hud_fov)
 		else
 			default_aim_hud_fov = get_aim_hud_fov()
 			default_zoom_factor = get_zoom_factor()
