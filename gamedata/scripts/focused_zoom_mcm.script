@@ -1,5 +1,7 @@
 -- If you don't use MCM, change your defaults from here.
 local defaults = {
+	["drain_stamina_mcm"] = true,
+	["stamina_drain_mult_mcm"] = 1.0,
 	["holstered_fov_mcm"] = 1.0,
 	["aiming_hud_fov_mcm"] = 1.0,
 	["aiming_fov_mcm"] = 1.0
@@ -12,6 +14,8 @@ end
 function on_mcm_load()
     op = { id= "focused",sh=true ,gr={
             { id= "title",type= "slide",link= "ui_options_slider_player",text="ui_mcm_focused_title",size= {512,50},spacing= 20 },
+			{id = "drain_stamina_mcm", type = "check", val = 1, def = true},
+			{id = "stamina_drain_mult_mcm", type = "track", val = 2, min=0.51,max=1.49,step=0.01, def = 1.0},
 			{id = "holstered_fov_mcm", type = "track", val = 2, min=0.51,max=1.49,step=0.01, def = 1.0},
             {id = "aiming_hud_fov_mcm", type = "track", val = 2, min=0.5,max=1.5,step=0.01, def = 1.0},
 			{id = "aiming_fov_mcm", type = "track", val = 2, min=0.51,max=1.49,step=0.01, def = 1.0},
