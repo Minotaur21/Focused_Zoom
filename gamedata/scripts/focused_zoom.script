@@ -20,6 +20,7 @@ local default_aim_hud_fov = 0.35	-- hud_fov as set by Adjustable Scopes configs
 local default_zoom_factor = 0		-- scope_zoom_factor as set by weapon configs
 
 -- Game Setting values
+local default_hud_fov = ui_options.get("video/basic/hud_fov")
 local default_fov = ui_options.get("video/basic/fov")
 
 -- Useful booleans
@@ -45,9 +46,11 @@ function get_on_start()
 	aiming_hud_fov_mcm = focused_zoom_mcm.get_config("aiming_hud_fov_mcm")
 	aiming_fov_mcm = focused_zoom_mcm.get_config("aiming_fov_mcm")
 	default_fov = ui_options.get("video/basic/fov")
+	default_hud_fov = ui_options.get("video/basic/hud_fov")
 end
 
 local function on_option_change()
+	default_hud_fov = ui_options.get("video/basic/hud_fov")
 	default_fov = ui_options.get("video/basic/fov")
 	if is_mcm_open then
 		zoom_in_iron = scope_fov_mcm.get_config("iron_fov")
@@ -168,6 +171,7 @@ end
 function focused_zoom_out()
 	local weapon = db.actor:active_item()
 	if not weapon then
+		exec_console_cmd("hud_fov " .. default_hud_fov)
 		exec_console_cmd("fov " .. default_fov)
 	end
 	focused_zoom = false
