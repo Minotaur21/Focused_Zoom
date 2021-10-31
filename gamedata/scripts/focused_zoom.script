@@ -164,7 +164,6 @@ end
 
 function scope_focused_zoom_in()
 	print_dbg("scope_focused_zoom_in started")
-	scope_focused_zoom = true
 	local weapon = db.actor:active_item()
 	local two_dim = weapon and ini_sys:r_float_ex(weapon:section(),"scope_status") == 1
 	if weapon and weapon_aimed and (not two_dim) then
@@ -181,9 +180,10 @@ function scope_focused_zoom_in()
 			exec_console_cmd("fov " .. default_aim_fov * aiming_fov_mult)
 		end
 	else
-		--print_dbg("scope_focused_zoom_in is 2d")
+		print_dbg("scope_focused_zoom_in is 2d")
 	end
 	print_dbg("scope_focused_zoom_in complete")
+	scope_focused_zoom = true
 end
 
 -- Turns off Focused Zoom while holstered
@@ -206,7 +206,6 @@ end
 -- Turns on Focused Zoom while holstered
 function focused_zoom_in()
 	print_dbg("focused_zoom_in started")
-	focused_zoom = true
 	local weapon = db.actor:active_item()
 	if not weapon then
 		print_dbg("weapon holstered")
@@ -216,6 +215,7 @@ function focused_zoom_in()
 	else
 		print_dbg("weapon not holstered")
 	end
+	focused_zoom = true
 	print_dbg("focused_zoom_in complete")
 end
 
@@ -233,6 +233,7 @@ end
 
 function actor_on_weapon_zoom_out(wpn)
 	print_dbg("weapon aim shows false")
+	scope_focused_zoom_out()
     weapon_aimed = false
 end
 
@@ -243,27 +244,23 @@ end
 
 local function on_key_release(key)
 	local bind = dik_to_bind(key)
-	if (bind == key_bindings.kUSE) and weapon_aimed and scope_focused_zoom then
+	if (bind == key_bindings.kUSE) and weapon_aimed and scope_focused_zoom then -- and not focused_zoom then
 		print_dbg("scope_focused_zoom_out pressed")
 		scope_focused_zoom_out()
 	end
-	if (bind == key_bindings.kWPN_ZOOM) and not weapon_aimed and focused_zoom then
+	if (bind == key_bindings.kWPN_ZOOM) and not weapon_aimed and not scope_focused_zoom and focused_zoom then
 		print_dbg("focused_zoom_out pressed")
-		if scope_focused_zoom then
-			scope_focused_zoom_out()
-			return
-		end
 		focused_zoom_out()
 	end
 end
 
 local function on_key_press(key)
 	local bind = dik_to_bind(key)
-	if (bind == key_bindings.kUSE) and weapon_aimed and not scope_focused_zoom then
+	if (bind == key_bindings.kUSE) and weapon_aimed and not scope_focused_zoom then -- and not focused_zoom then
 		print_dbg("scope_focused_zoom_in pressed")
 		scope_focused_zoom_in()
 	end
-	if (bind == key_bindings.kWPN_ZOOM) and not weapon_aimed and not focused_zoom then
+	if (bind == key_bindings.kWPN_ZOOM) and not weapon_aimed and not scope_focused_zoom and not focused_zoom then
 		print_dbg("focused_zoom_in pressed")
 		focused_zoom_in()
 	end
