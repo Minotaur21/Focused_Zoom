@@ -36,7 +36,19 @@ Shader Based 2D Scopes - https://www.moddb.com/mods/stalker-anomaly/addons/shade
 ^^ This is an excellent alternative to PiP Scopes (which some people call 3D scopes). PiP scopes kill fps in Anomaly, the game isn't designed to handle them well.
 The Shader Based 2D Scopes mod provides a fresh experience and all the 2D scopes you used to laugh at will suddenly come to life. Please note that Shader Based 2D only works in DX10/DX11.
 
+If you don't wanna install Adjustable Scopes or MCM and want a simpler way to get similar features, check out SlowVibe's mod!
+https://www.moddb.com/mods/stalker-anomaly/addons/free-zoom
+
 KNOWN ISSUES
 --------------------------------------------------------------------------------------------------------------------------
 - Some 3d-model scopes such as the AUG scope and the SUSAT don't have any Aim Focus zoom available. The Closer Aim Sights feature still works for them. Let me know if you have suggestions on how to implement additional zoom for those scopes.
 - Not an issue per se, but 2D scopes don't have any effects applied to them. Never intended to support 2D scopes. I recommend getting the "Shader Based 2D Scopes" mod I linked above.
+
+CREDITS
+--------------------------------------------------------------------------------------------------------------------------
+- sneakydud - for his excellent Adjustable Scopes addon and his neat script functions - https://www.moddb.com/members/sneakybreeki/addons
+- ravenascendant - for his outstanding Mod Configuration Menu and thorough documentation - https://www.moddb.com/members/ravenascendant/addons
+- SlowVibe - for his proactive Free_Zoom addon and diligent work - https://www.moddb.com/members/slowvibe/addons
+- HarukaSai - for his helpfulness - https://www.moddb.com/members/funkypunk/addons
+- bvcx/xcvb - for his patience - https://www.moddb.com/members/bvcx/addons
+- Ketchup, Gwub, Maid, FlashBangZ, Artifax, Beef, and all the real ones on the EFP server for sticking around.
