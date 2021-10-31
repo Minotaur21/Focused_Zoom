@@ -1,11 +1,8 @@
 -- If you don't use MCM, change your defaults from here.
 local defaults = {
-    ["hud_fov_mult"] = 0.47,
 	["fov_mult"] = 0.47,
-    ["look_sensitivity_mult"] = 0.47,
 	["aiming_hud_fov_mult"] = 0.47,
-	["aiming_fov_mult"] = 0.47,
-	["aiming_sensitivity_mult"] = 0.47
+	["aiming_fov_mult"] = 0.47
 }
 
 function get_config(key)
@@ -15,12 +12,9 @@ end
 function on_mcm_load()
     op = { id= "focused",sh=true ,gr={
             { id= "title",type= "slide",link= "ui_options_slider_player",text="ui_mcm_focused_title",size= {512,50},spacing= 20 },
-			{id = "hud_fov_mult", type = "track", val = 2, min=0.1,max=1,step=0.01, def = 0.47},
 			{id = "fov_mult", type = "track", val = 2, min=0.1,max=1,step=0.01, def = 0.47},
-            {id = "look_sensitivity_mult", type = "track", val = 2, min=0.01,max=1,step=0.01, def = 0.47},
             {id = "aiming_hud_fov_mult", type = "track", val = 2, min=0.1,max=1,step=0.01, def = 0.47},
 			{id = "aiming_fov_mult", type = "track", val = 2, min=0.1,max=1,step=0.01, def = 0.47},
-            {id = "aiming_look_sensitivity_mult", type = "track", val = 2, min=0.01,max=1,step=0.01, def = 0.47},
         }
     }
         
