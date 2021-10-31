@@ -1,7 +1,7 @@
 <!-- 
 	Anomaly Modconfiguration Menu strings
 	
--->
+-->drain_stamina_mcm
 
 <string_table>
 
@@ -13,25 +13,46 @@
 		<text>Focused Zoom</text>
 	</string>
 
+	<string id="ui_mcm_focused_drain_stamina_mcm">
+		<text>Focus Stamina Drain</text>
+	</string>
+	<string id="ui_mcm_focused_drain_stamina_mcm_desc">
+		<text>If turned on, Focus will drain your stamina. \n
+				\n Your Focus will stop if your stamina is too low. \n
+				\n You need at least some stamina to start Focusing.</text>
+	</string>
+
+	<string id="ui_mcm_focused_stamina_drain_mult_mcm">
+		<text>Focus Stamina Drain Multiplier</text>
+	</string>
+	<string id="ui_mcm_focused_stamina_drain_mult_mcm_desc">
+		<text>Only works if Stamina Drain is on. Higher values mean stamina drains more quickly when Focusing. \n
+				\n Default: 1.0</text>
+	</string>
+
 	<string id="ui_mcm_focused_holstered_fov_mcm">
-		<text>Zoom multiplier when Focusing without a weapon.</text>
+		<text>Focus Zoom Multiplier While Holstered</text>
 	</string>
 	<string id="ui_mcm_focused_holstered_fov_mcm_desc">
-		<text>Only applies if your weapon is holstered or unequipped. Higher values mean more zoom.</text>
+		<text>Higher values mean more zoom when you Focus without a weapon in your hands. \n
+				\n Default: 1.0</text>
 	</string>
 	
 	<string id="ui_mcm_focused_aiming_hud_fov_mcm">
-		<text>Bring your weapon closer to you when Focusing while aiming.</text>
+		<text>Focus Weapon Sight/Scope Distance</text>
 	</string>
 	<string id="ui_mcm_focused_aiming_hud_fov_mcm_desc">
-		<text>Lower values bring the weapon sights closer to you.</text>
+		<text>Lower values bring the weapon sight/scope closer to you when you aim and Focus. \n
+				\n Default: 1.0</text>
 	</string>
 
 	<string id="ui_mcm_focused_aiming_fov_mcm">
-		<text>Zoom multiplier when Focusing while aiming.</text>
+		<text>Focus Zoom Multiplier While Aiming</text>
 	</string>
 	<string id="ui_mcm_focused_aiming_fov_mcm_desc">
-		<text>Works for most weapon sights. Does not work for 2D scopes. Higher values mean more zoom.</text>
+		<text>Higher values mean more zoom when you aim your weapon and Focus. \n
+				\n Works for most weapon sights. Does not work for 2D scopes.  \n
+				\n Default: 1.0</text>
 	</string>
 	
 
