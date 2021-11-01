@@ -4,7 +4,7 @@ local defaults = {
 	["stamina_drain_mult_mcm"] = 1.0,
 	["holstered_fov_mcm"] = 1.0,
 	["aiming_hud_fov_mcm"] = 1.0,
-	["aiming_fov_mcm"] = 1.0
+	["aiming_fov_mcm"] = 1.0,
 }
 
 function get_config(key)

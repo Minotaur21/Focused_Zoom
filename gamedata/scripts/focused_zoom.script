@@ -46,11 +46,13 @@ function get_on_start()
 	zoom_in_scope = scope_fov_mcm.get_config("scope_fov")
 	zoom_bad_scope = scope_fov_mcm.get_config("bad_scope_fov")
 	gl_fov = scope_fov_mcm.get_config("grenade_fov")
+--[[
 	drain_stamina_mcm = focused_zoom_mcm.get_config("drain_stamina_mcm")
 	stamina_drain_mult_mcm = focused_zoom_mcm.get_config("stamina_drain_mult_mcm")
 	holstered_fov_mcm = focused_zoom_mcm.get_config("holstered_fov_mcm")
 	aiming_hud_fov_mcm = focused_zoom_mcm.get_config("aiming_hud_fov_mcm")
 	aiming_fov_mcm = focused_zoom_mcm.get_config("aiming_fov_mcm")
+--]]
 	default_fov = ui_options.get("video/basic/fov")
 	default_hud_fov = ui_options.get("video/basic/hud_fov")
 end
@@ -63,11 +65,13 @@ local function on_option_change()
 		zoom_in_scope = scope_fov_mcm.get_config("scope_fov")
 		zoom_bad_scope = scope_fov_mcm.get_config("bad_scope_fov")
 		gl_fov = scope_fov_mcm.get_config("grenade_fov")
+--[[
 		drain_stamina_mcm = focused_zoom_mcm.get_config("drain_stamina_mcm")
 		stamina_drain_mult_mcm = focused_zoom_mcm.get_config("stamina_drain_mult_mcm")
 		holstered_fov_mcm = focused_zoom_mcm.get_config("holstered_fov_mcm")
 		aiming_hud_fov_mcm = focused_zoom_mcm.get_config("aiming_hud_fov_mcm")
 		aiming_fov_mcm = focused_zoom_mcm.get_config("aiming_fov_mcm")
+--]]
 	end
 end
 
