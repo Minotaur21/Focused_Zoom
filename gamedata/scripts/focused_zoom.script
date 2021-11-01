@@ -1,5 +1,15 @@
+--[[
+ 	
+TODO
+add clamp for stamina drain
+revise naming "focused" to "focus"
+reduce number of variables and comparisons
+make focus zoom out ending hud_fov exactly the same as Adjustable Scopes hud_fov
+
+--]]
+
 -- Focused Zoom MCM values
-local drain_stamina_mcm = true				-- true means stamina drain MCM option is on
+local drain_stamina_mcm = false				-- true means stamina drain MCM option is on
 local stamina_drain_mult_mcm = 1.0      	-- use as direct multiplier for stamina drain while Focusing
 local holstered_fov_mcm = 1.0				-- used to calculate fov multiplier when holstered and focused
 local aiming_hud_fov_mcm = 1.0				-- used to calculate hud_fov multiplier when aimed and focused
@@ -72,37 +82,27 @@ local function on_option_change()
 end
 
 function focus_stamina_drain()
-	print_dbg("Stamina drain function started")												--dbg
+	drain_stamina_mcm = focused_zoom_mcm.get_config("drain_stamina_mcm")
+	if not drain_stamina_mcm then return end
 	local player_stamina = db.actor.power
 	if player_stamina > 0.1 then
 		enough_stamina_for_focus = true
-		print_dbg("stamina meets requirements")													--dbg
-		print_dbg("Stamina: %s", player_stamina)												--dbg
-		if enough_stamina_for_focus	then print_dbg("enough stamina for focus") end				--dbg
 	else
 		enough_stamina_for_focus = false
-		print_dbg("stamina does not meet requirements")											--dbg
-		print_dbg("Stamina: %s", player_stamina)												--dbg
-		if not enough_stamina_for_focus	then print_dbg("not enough stamina for focus") end		--dbg
 		if focused_zoom then focused_zoom_out() end
+		if scope_focused_zoom then scope_focused_zoom_out() end
 	end
 	if focus_is_draining_stamina and enough_stamina_for_focus then
 		local stamina_drain_amount = 0.05 * stamina_drain_mult_mcm * -1.0	--change the first number default 0.05
 		local new_player_stamina = player_stamina - (stamina_drain_amount)
 		if new_player_stamina > 0.1 then
 			db.actor:change_power(stamina_drain_amount)
-			print_dbg("Power should change")													--dbg
-			print_dbg("New Stamina: %s", new_player_stamina)									--dbg
-			print_dbg("Actual Stamina: %s", db.actor.power)										--dbg
 		else
 			enough_stamina_for_focus = false
 			if focused_zoom then focused_zoom_out() end
-			print_dbg("Power should NOT change")												--dbg
-			print_dbg("New Stamina: %s", new_player_stamina)									--dbg
-			print_dbg("Actual Stamina: %s", db.actor.power)										--dbg
+			if scope_focused_zoom then scope_focused_zoom_out() end
 		end
 	end
-	print_dbg("Stamina Drain Function ended")												--dbg
 end
 
 -- Returns scope_zoom_factor written in weapon configs
@@ -153,21 +153,15 @@ end
 function scope_focused_zoom_out()
 	local weapon = db.actor:active_item()
 	local two_dim = weapon and ini_sys:r_float_ex(weapon:section(),"scope_status") == 1
-	if weapon then
-		if two_dim then
-			return
-		elseif not weapon_aimed then
+	if weapon and not two_dim then
+		if not weapon_aimed then
 			exec_console_cmd("hud_fov " .. default_hud_fov)
 			exec_console_cmd("fov " .. default_fov)
 		else
 			default_aim_hud_fov = get_aim_hud_fov()
 			default_zoom_factor = get_zoom_factor()
 			exec_console_cmd("hud_fov " .. default_aim_hud_fov)
-			if not weapon_aimed then
-				exec_console_cmd("fov " .. default_fov)
-				scope_focused_zoom = false
-				return
-			elseif default_zoom_factor == 0 then
+			if default_zoom_factor == 0 then
 				exec_console_cmd("fov " .. default_fov)
 			else
 				exec_console_cmd("fov " .. default_zoom_factor * 0.75)
@@ -176,40 +170,48 @@ function scope_focused_zoom_out()
 	end
 	focused_zoom = false
 	scope_focused_zoom = false
+	focus_is_draining_stamina = false
 end
 
 -- Turns on aimed Focused Zoom
 function scope_focused_zoom_in()
+	focused_zoom = false
+	scope_focused_zoom = false
+	focus_is_draining_stamina = false
+	drain_stamina_mcm = focused_zoom_mcm.get_config("drain_stamina_mcm")
+	local player_stamina = db.actor.power
+		if player_stamina > 0.1 then enough_stamina_for_focus = true
+		else enough_stamina_for_focus = false end
 	local weapon = db.actor:active_item()
 	local two_dim = weapon and ini_sys:r_float_ex(weapon:section(),"scope_status") == 1
-	if weapon then
-		if two_dim then
+	if weapon and not two_dim then
+		if not weapon_aimed then
+			exec_console_cmd("hud_fov " .. default_hud_fov)
+			exec_console_cmd("fov " .. default_fov)
 			return
-		else
+		elseif not drain_stamina_mcm or enough_stamina_for_focus then
 			default_aim_hud_fov = get_aim_hud_fov()
 			default_zoom_factor = get_zoom_factor()
 			local focused_zoom_factor = (1.5 - aiming_fov_mcm) * default_zoom_factor
 			aiming_focus_hud_fov = (aiming_hud_fov_mcm - 0.49) * default_aim_hud_fov
-			if aiming_focus_hud_fov > 1.0 then aiming_focus_hud_fov = 1.0 end
-			if aiming_focus_hud_fov < 0.1 then aiming_focus_hud_fov = 0.1 end
+				if aiming_focus_hud_fov > 1.0 then aiming_focus_hud_fov = 1.0 end
+				if aiming_focus_hud_fov < 0.1 then aiming_focus_hud_fov = 0.1 end
 			exec_console_cmd("hud_fov " .. aiming_focus_hud_fov)
-			if not weapon_aimed then
-				exec_console_cmd("fov " .. default_fov)
-				return
-			elseif default_zoom_factor == 0 then
+			if default_zoom_factor == 0 then
 				aiming_focus_fov = (1.5 - aiming_fov_mcm) * default_fov
-				if aiming_focus_fov > 180 then aiming_focus_fov = 180 end
-				if aiming_focus_fov < 5 then aiming_focus_fov = 5 end
+					if aiming_focus_fov > 180 then aiming_focus_fov = 180 end
+					if aiming_focus_fov < 5 then aiming_focus_fov = 5 end
 				exec_console_cmd("fov " .. aiming_focus_fov)
 			else
 				aiming_focus_fov = focused_zoom_factor * 0.75
-				if aiming_focus_fov > 180 then aiming_focus_fov = 180 end
-				if aiming_focus_fov < 5 then aiming_focus_fov = 5 end
+					if aiming_focus_fov > 180 then aiming_focus_fov = 180 end
+					if aiming_focus_fov < 5 then aiming_focus_fov = 5 end
 				exec_console_cmd("fov " .. aiming_focus_fov)
 			end
+			scope_focused_zoom = true
+			if drain_stamina_mcm then focus_is_draining_stamina = true end
 		end
 	end
-	scope_focused_zoom = true
 end
 
 -- Turns off holstered Focused Zoom
@@ -228,14 +230,17 @@ end
 function focused_zoom_in()
 	local weapon = db.actor:active_item()
 	if not weapon then
+		drain_stamina_mcm = focused_zoom_mcm.get_config("drain_stamina_mcm")
 		local player_stamina = db.actor.power
-		if player_stamina > 0.1 then
+			if player_stamina > 0.1 then enough_stamina_for_focus = true
+			else enough_stamina_for_focus = false end
+		if not drain_stamina_mcm or enough_stamina_for_focus then
 			holstered_focus_fov = (1.5 - holstered_fov_mcm) * default_fov
 			if holstered_focus_fov > 180 then holstered_focus_fov = 180 end
 			if holstered_focus_fov < 5 then holstered_focus_fov = 5 end
 			exec_console_cmd("fov " .. holstered_focus_fov)
 			focused_zoom = true
-			focus_is_draining_stamina = true
+			if drain_stamina_mcm then focus_is_draining_stamina = true end
 		else
 			focused_zoom = false
 			scope_focused_zoom = false
