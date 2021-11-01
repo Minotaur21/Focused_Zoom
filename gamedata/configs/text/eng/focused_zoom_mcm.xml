@@ -1,13 +1,14 @@
+<?xml version="1.0" encoding="windows-1251"?>
+
 <!-- 
-	Anomaly Modconfiguration Menu strings
-	
--->drain_stamina_mcm
+	MCM
+-->
 
 <string_table>
 
 
 	<string id="ui_mcm_focused_title">
-		<text>Focused Zoom Settings</text>
+		<text>Focused Zoom</text>
 	</string>	
 	<string id="ui_mcm_menu_focused">
 		<text>Focused Zoom</text>
